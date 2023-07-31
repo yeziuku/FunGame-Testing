@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Data;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using ConverterExample;
 using Milimoe.FunGame.Core.Api.Utility;
 using Milimoe.FunGame.Core.Entity;
 using Milimoe.FunGame.Core.Library.Common.JsonConverter;
@@ -25,15 +24,15 @@ table.Rows.Add(2, "Jane", 25);
 table.Rows.Add(3, "Bob", 40);
 ds.Tables.Add(table);
 
-JsonSerializerOptions options = new()
+System.Text.Json.JsonSerializerOptions options = new()
 {
     WriteIndented = true,
-    ReferenceHandler = ReferenceHandler.IgnoreCycles,
-    Converters = { new DateTimeConverter(), new DataTableConverter(), new DataSetConverter(), new UserConverter(), new RoomConverter() }
+    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles,
+    Converters = { new DateTimeConverter(), new DataTableConverter(), new DataSetConverter(), new UserConverter(), new RoomConverter(), new PersonConverter(), new AddressConverter() }
 };
 
 Room r = Factory.GetRoom(1294367, "w5rtvh8".ToUpper(), DateTime.Now, Factory.GetUser(), Milimoe.FunGame.Core.Library.Constant.RoomType.Mix, Milimoe.FunGame.Core.Library.Constant.RoomState.Created);
-User u = Factory.GetUser(1, "LUOLI", "123123", DateTime.Now, DateTime.Now, "LUOLI@66.COM", "QWQAQW");
+User u = Factory.GetUser(1, "LUOLI", DateTime.Now, DateTime.Now, "LUOLI@66.COM", "QWQAQW");
 
 Hashtable hashtable = new()
 {
@@ -42,11 +41,28 @@ Hashtable hashtable = new()
     { "user", u }
 };
 
-string json = JsonSerializer.Serialize(hashtable, options);
+string json = NetworkUtility.JsonSerialize(hashtable, options);
 
-Hashtable hashtable2 = JsonSerializer.Deserialize<Hashtable>(json, options) ?? new();
+Hashtable hashtable2 = NetworkUtility.JsonDeserialize<Hashtable>(json, options) ?? new();
 
 User u2 = NetworkUtility.JsonDeserializeFromHashtable<User>(hashtable2, "user") ?? Factory.GetUser();
 Room r2 = NetworkUtility.JsonDeserializeFromHashtable<Room>(hashtable2, "room") ?? Factory.GetRoom();
 
-System.Console.WriteLine(u2.Username + " 进入了 " + r2.Roomid + " 房间");
+Console.WriteLine(u2.Username + " 进入了 " + r2.Roomid + " 房间");
+
+Person p = new()
+{
+    Age = (int)r2.Id,
+    Name = u2.Username,
+    Address = new()
+    {
+        State = "呵呵州(Hehe State)",
+        City = "哈哈市(Haha City)"
+    }
+};
+
+json = NetworkUtility.JsonSerialize(p, options);
+
+Person p2 = NetworkUtility.JsonDeserialize<Person>(json, options) ?? new();
+
+Console.WriteLine("My name is " + p2.Name + ", I am " + p2.Age + "-year-old. I live at " + p2.Address.State + " " + p2.Address.City);

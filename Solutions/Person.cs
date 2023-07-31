@@ -1,77 +1,69 @@
-using System;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using Milimoe.FunGame.Core.Api.Utility;
+using Milimoe.FunGame.Core.Library.Common.Architecture;
 
-namespace ConsoleApp1
+namespace ConverterExample
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            string jsonString = @"{""name"": ""John"", ""age"": 30, ""address"": {""city"": ""New York"", ""state"": ""NY""}}";
-
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new PersonConverter());
-
-            var person = JsonSerializer.Deserialize<Person>(jsonString, options);
-
-            Console.WriteLine(person.Name);
-            Console.WriteLine(person.Age);
-            Console.WriteLine(person.Address.City);
-            Console.WriteLine(person.Address.State);
-        }
-    }
-
     public class Person
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         public int Age { get; set; }
-        public Address Address { get; set; }
+        public Address Address { get; set; } = new();
     }
 
     public class Address
     {
-        public string City { get; set; }
-        public string State { get; set; }
+        public string State { get; set; } = "";
+        public string City { get; set; } = "";
     }
 
-    public class PersonConverter : JsonConverter<Person>
+    public class AddressConverter : BaseEntityConverter<Address>
     {
-        public override Person Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override void ReadPropertyName(ref Utf8JsonReader reader, string propertyName, JsonSerializerOptions options, ref Address? result)
         {
-            string name = null;
-            int age = 0;
-            Address address = null;
-
-            while (reader.Read())
+            result ??= new();
+            switch (propertyName)
             {
-                if (reader.TokenType == JsonTokenType.EndObject)
-                {
+                case "city":
+                    result.City = reader.GetString() ?? "";
                     break;
-                }
 
-                if (reader.TokenType == JsonTokenType.PropertyName)
-                {
-                    string propertyName = reader.GetString();
-
-                    switch (propertyName)
-                    {
-                        case "name":
-                            name = reader.GetString();
-                            break;
-
-                        case "age":
-                            age = reader.GetInt32();
-                            break;
-
-                        case "address":
-                            address = JsonSerializer.Deserialize<Address>(ref reader, options);
-                            break;
-                    }
-                }
+                case "state":
+                    result.State = reader.GetString() ?? "";
+                    break;
             }
+        }
 
-            return new Person { Name = name, Age = age, Address = address };
+        public override void Write(Utf8JsonWriter writer, Address value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+
+            writer.WriteString("state", value.State);
+            writer.WriteString("city", value.City);
+
+            writer.WriteEndObject();
+        }
+    }
+
+    public class PersonConverter : BaseEntityConverter<Person>
+    {
+        public override void ReadPropertyName(ref Utf8JsonReader reader, string propertyName, JsonSerializerOptions options, ref Person? result)
+        {
+            result ??= new();
+            switch (propertyName)
+            {
+                case "name":
+                    result.Name = reader.GetString() ?? "";
+                    break;
+
+                case "age":
+                    result.Age = reader.GetInt32();
+                    break;
+
+                case "address":
+                    result.Address = NetworkUtility.JsonDeserialize<Address>(reader.GetString() ?? "", options) ?? new Address();
+                    break;
+            }
         }
 
         public override void Write(Utf8JsonWriter writer, Person value, JsonSerializerOptions options)
@@ -80,9 +72,7 @@ namespace ConsoleApp1
 
             writer.WriteString("name", value.Name);
             writer.WriteNumber("age", value.Age);
-
-            writer.WritePropertyName("address");
-            JsonSerializer.Serialize(writer, value.Address, options);
+            writer.WriteString("address", NetworkUtility.JsonSerialize(value.Address, options));
 
             writer.WriteEndObject();
         }
