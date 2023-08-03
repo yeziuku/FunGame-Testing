@@ -24,12 +24,11 @@ table.Rows.Add(2, "Jane", 25);
 table.Rows.Add(3, "Bob", 40);
 ds.Tables.Add(table);
 
-System.Text.Json.JsonSerializerOptions options = new()
-{
-    WriteIndented = true,
-    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles,
-    Converters = { new DateTimeConverter(), new DataTableConverter(), new DataSetConverter(), new UserConverter(), new RoomConverter(), new PersonConverter(), new AddressConverter() }
-};
+JsonTool JsonTool = new();
+JsonTool.AddConverter(new UserConverter());
+JsonTool.AddConverter(new RoomConverter());
+JsonTool.AddConverter(new PersonConverter());
+JsonTool.AddConverter(new AddressConverter());
 
 Room r = Factory.GetRoom(1294367, "w5rtvh8".ToUpper(), DateTime.Now, Factory.GetUser(), Milimoe.FunGame.Core.Library.Constant.RoomType.Mix, Milimoe.FunGame.Core.Library.Constant.RoomState.Created);
 User u = Factory.GetUser(1, "LUOLI", DateTime.Now, DateTime.Now, "LUOLI@66.COM", "QWQAQW");
@@ -41,12 +40,12 @@ Hashtable hashtable = new()
     { "user", u }
 };
 
-string json = NetworkUtility.JsonSerialize(hashtable, options);
+string json = JsonTool.GetString(hashtable);
 
-Hashtable hashtable2 = NetworkUtility.JsonDeserialize<Hashtable>(json, options) ?? new();
+Hashtable hashtable2 = JsonTool.GetObject<Hashtable>(json) ?? new();
 
-User u2 = NetworkUtility.JsonDeserializeFromHashtable<User>(hashtable2, "user") ?? Factory.GetUser();
-Room r2 = NetworkUtility.JsonDeserializeFromHashtable<Room>(hashtable2, "room") ?? Factory.GetRoom();
+User u2 = JsonTool.GetObject<User>(hashtable2, "user") ?? Factory.GetUser();
+Room r2 = JsonTool.GetObject<Room>(hashtable2, "room") ?? Factory.GetRoom();
 
 Console.WriteLine(u2.Username + " 进入了 " + r2.Roomid + " 房间");
 
@@ -61,8 +60,8 @@ Person p = new()
     }
 };
 
-json = NetworkUtility.JsonSerialize(p, options);
+json = JsonTool.GetString(p);
 
-Person p2 = NetworkUtility.JsonDeserialize<Person>(json, options) ?? new();
+Person p2 = JsonTool.GetObject<Person>(json) ?? new();
 
 Console.WriteLine("My name is " + p2.Name + ", I am " + p2.Age + "-year-old. I live at " + p2.Address.State + " " + p2.Address.City);
