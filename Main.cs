@@ -25,10 +25,7 @@ table.Rows.Add(3, "Bob", 40);
 ds.Tables.Add(table);
 
 JsonTool JsonTool = new();
-JsonTool.AddConverter(new UserConverter());
-JsonTool.AddConverter(new RoomConverter());
-JsonTool.AddConverter(new PersonConverter());
-JsonTool.AddConverter(new AddressConverter());
+JsonTool.AddConverters(new System.Text.Json.Serialization.JsonConverter[] { new UserConverter(), new RoomConverter(), new PersonConverter(), new AddressConverter() });
 
 Room r = Factory.GetRoom(1294367, "w5rtvh8".ToUpper(), DateTime.Now, Factory.GetUser(), Milimoe.FunGame.Core.Library.Constant.RoomType.Mix, Milimoe.FunGame.Core.Library.Constant.RoomState.Created);
 User u = Factory.GetUser(1, "LUOLI", DateTime.Now, DateTime.Now, "LUOLI@66.COM", "QWQAQW");
