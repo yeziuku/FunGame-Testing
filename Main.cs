@@ -41,8 +41,14 @@ string json = JsonTool.GetString(hashtable);
 
 Hashtable hashtable2 = JsonTool.GetObject<Hashtable>(json) ?? new();
 
+DataTable table2 = JsonTool.GetObject<DataTable>(json) ?? new();
 User u2 = JsonTool.GetObject<User>(hashtable2, "user") ?? Factory.GetUser();
 Room r2 = JsonTool.GetObject<Room>(hashtable2, "room") ?? Factory.GetRoom();
+
+table2.AsEnumerable().ToList().ForEach(row =>
+{
+    Console.WriteLine("Id: " + row["Id"] + ", Name: "+ row["Name"] + ", Age: " + row["Age"]);
+});
 
 Console.WriteLine(u2.Username + " 进入了 " + r2.Roomid + " 房间");
 
