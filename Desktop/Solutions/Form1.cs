@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-
-namespace ChessBoardExample
+﻿namespace ChessBoardExample
 {
-    public partial class Form2 : Form
+    public partial class Form1 : Form
     {
         const int gridSize = 12; // 每个小方块大小为40像素
         const int step = 3; // 递进
@@ -13,7 +8,7 @@ namespace ChessBoardExample
         Dictionary<string, Panel> chessboardDict = new Dictionary<string, Panel>();
         HashSet<Panel> redPanelsSet = new HashSet<Panel>();
 
-        public Form2()
+        public Form1()
         {
             InitializeComponent();
             InitializeChessboard();

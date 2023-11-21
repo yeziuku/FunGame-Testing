@@ -5,11 +5,12 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <BaseOutputPath>..\bin\</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="FunGame.Core">
-      <HintPath>..\FunGame.Core\bin\Debug\net7.0\FunGame.Core.dll</HintPath>
+      <HintPath>..\..\FunGame.Core\bin\Debug\net7.0\FunGame.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
 

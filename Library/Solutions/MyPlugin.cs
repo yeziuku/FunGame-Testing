@@ -79,6 +79,7 @@ namespace FunGame.Testing.Solutions
             {
                 WritelnSystemInfo("[" + Name + "] " + e.RoomID + " 的玩家数量为： " + request.GetResult<int>("count"));
             }
+            request.Dispose();
         }
 
         public void FailedIntoRoomEvent(object sender, RoomEventArgs e)
