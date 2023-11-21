@@ -49,7 +49,8 @@
             {
                 Name = key,
                 Size = new Size(gridSize, gridSize),
-                Location = p
+                Location = p,
+                BorderStyle = BorderStyle.Fixed3D,
             };
             if ((x + y) % 2 == 0)
                 cell.BackColor = Color.White;
