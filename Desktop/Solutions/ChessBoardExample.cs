@@ -1,14 +1,14 @@
 ﻿namespace ChessBoardExample
 {
-    public partial class Form1 : Form
+    public partial class ChessBoardExample : Form
     {
-        const int gridSize = 12; // 每个小方块大小为40像素
+        const int gridSize = 32; // 每个小方块大小为40像素
         const int step = 3; // 递进
 
         Dictionary<string, Panel> chessboardDict = new Dictionary<string, Panel>();
         HashSet<Panel> redPanelsSet = new HashSet<Panel>();
 
-        public Form1()
+        public ChessBoardExample()
         {
             InitializeComponent();
             InitializeChessboard();
@@ -29,6 +29,8 @@
                 if (redPanelsSet.Count > 0) SetOriginalCells();
                 else CheckRedCells(5, 9);
             });
+
+            Size = new Size(562, 562);
         }
 
         private void InitializeChessboard()
@@ -128,10 +130,11 @@
             }
         }
 
-        private void OnCellMouseEnter(object sender, System.EventArgs e)
+        private void OnCellMouseEnter(object? sender, System.EventArgs e)
         {
             try
             {
+                if (sender is null) return;
                 // 获取当前鼠标进入区域对应格子位置；
                 string[] s = ((Panel)sender).Name.Split('_');
                 int x = int.Parse(s[0]);
@@ -145,7 +148,7 @@
             }
         }
 
-        private void OnCellMouseLeave(object sender, EventArgs e)
+        private void OnCellMouseLeave(object? sender, EventArgs e)
         {
             SetOriginalCells();
         }

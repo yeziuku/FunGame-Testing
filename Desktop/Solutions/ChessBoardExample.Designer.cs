@@ -1,6 +1,6 @@
 ﻿namespace ChessBoardExample
 {
-    partial class Form1
+    partial class ChessBoardExample
     {
         /// <summary>
         /// Required designer variable.
