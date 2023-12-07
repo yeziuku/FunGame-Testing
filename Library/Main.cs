@@ -27,7 +27,7 @@ ds.Tables.Add(table);
 JsonTool JsonTool = new();
 JsonTool.AddConverters(new System.Text.Json.Serialization.JsonConverter[] { new UserConverter(), new RoomConverter(), new PersonConverter(), new AddressConverter() });
 
-Room r = Factory.GetRoom(1294367, "w5rtvh8".ToUpper(), DateTime.Now, Factory.GetUser(), Milimoe.FunGame.Core.Library.Constant.RoomType.Mix, Milimoe.FunGame.Core.Library.Constant.RoomState.Created);
+Room r = Factory.GetRoom(1294367, "w5rtvh8".ToUpper(), DateTime.Now, Factory.GetUser(), Milimoe.FunGame.Core.Library.Constant.RoomType.Mix, "", "", Milimoe.FunGame.Core.Library.Constant.RoomState.Created);
 User u = Factory.GetUser(1, "LUOLI", DateTime.Now, DateTime.Now, "LUOLI@66.COM", "QWQAQW");
 
 Hashtable hashtable = new()
